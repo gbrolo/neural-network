@@ -19,5 +19,5 @@ def get_images(keywords):
 # get_images('black and white question mark jpg')
 # get_images('black and white mickey mouse face shadow jpg')
 # get_images('black and white tree sketch jpg')
-get_images('circle sketch black and white jpg')
+# get_images('circle sketch black and white jpg')
 

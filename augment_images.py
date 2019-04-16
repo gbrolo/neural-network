@@ -14,7 +14,7 @@ def augment(folder):
     p.sample(4000)
 
 def augment_images():
-    folders = ['downloads/happy', 'downloads/sad']
+    folders = ['downloads/circle', 'downloads/egg', 'downloads/happy', 'downloads/house', 'downloads/mickey', 'downloads/question', 'downloads/sad', 'downloads/square', 'downloads/tree', 'downloads/triangle']
 
     for folder in folders:
         print('Augmenting' + folder)
