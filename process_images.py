@@ -25,8 +25,8 @@ def image_processing(raw_data, data_path, height, width):
             class_labels=i[1][:]
 
 if __name__=='__main__':
-    height = 200
-    width = 200
+    height = 50
+    width = 50
     raw_data = 'rawdata'
     data_path = 'data'
     if not os.path.exists(data_path):

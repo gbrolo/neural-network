@@ -1,5 +1,6 @@
 import os
 import cv2
+import numpy as np
 
 # Returns array of training images and array of labels for each image
 # class_names: list of strings
@@ -16,9 +17,11 @@ def load_train_images(class_names, class_ids, data_path, train_number):
         images = os.listdir(class_folder)[0:train_number]
 
         for image in images:
-            img = cv2.imread(os.path.join(class_folder, image))
+            img = np.ravel(np.array(np.float32(cv2.imread(os.path.join(class_folder, image), 0))))
+            # print("image: ", img)
+            # print("image shape: ", img.shape)
             X.append(img)
             y.append(class_ids[classname])
 
     print('Loaded images!')
-    return X, y
+    return np.array(X), np.array(y)
