@@ -1,4 +1,13 @@
 data_old
+data_old_50px
+data_old_50px2
+data_old_50px3
+data_old_100px
+data_old_200px
+drawings
 downloads
 rawdata
 data
+
+*.mat
+*.pyc

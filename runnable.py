@@ -18,7 +18,7 @@ X, y = load_train_images(class_names, class_ids, data_path, train_number)
 _, x = plt.subplots(10,10,figsize=(10,10))
 for i in range(10):
     for j in range(10):
-        x[i,j].imshow(X[np.random.randint(X.shape[0])].reshape((50,50), order = 'F'))          
+        x[i,j].imshow(X[np.random.randint(X.shape[0])].reshape((28,28), order = 'F'))          
         x[i,j].axis('off')
 
 plt.show()

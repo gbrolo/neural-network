@@ -97,6 +97,11 @@ data = loadmat('ex4data1.mat')
 X = data['X']
 y = data['y']
 
+print(X.shape)
+print(X[0])
+
+print('y: ', y)
+
 # show data
 _, axarr = plt.subplots(10,10,figsize=(10,10))
 for i in range(10):
@@ -104,7 +109,10 @@ for i in range(10):
         axarr[i,j].imshow(X[np.random.randint(X.shape[0])].reshape((20,20), order = 'F'))          
         axarr[i,j].axis('off')
 
+plt.show()
+
 weights = loadmat('ex4weights.mat')
+print('Weights: ', weights)
 theta1 = weights['Theta1']    #Theta1 has size 25 x 401
 theta2 = weights['Theta2']    #Theta2 has size 10 x 26
 nn_params = np.hstack((theta1.ravel(order='F'), theta2.ravel(order='F')))    #unroll parameters

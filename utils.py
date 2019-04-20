@@ -25,3 +25,18 @@ def load_train_images(class_names, class_ids, data_path, train_number):
 
     print('Loaded images!')
     return np.array(X), np.array(y)
+
+def load_test_image():
+    print('Loading test image...')
+
+    X = []
+
+    class_folder = 'drawings'
+    images = os.listdir(class_folder)
+
+    for image in images:
+        img = np.ravel(np.array(np.float32(cv2.imread(os.path.join(class_folder, image), 0))))
+        X.append(img)
+
+    print('Loaded test image')
+    return np.array(X)

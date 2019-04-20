@@ -19,9 +19,9 @@ def train_data():
     return class_names, class_ids, data_path, train_number
 
 def nn_hyperparameters():
-    L_input_size = 50 * 50
-    HL_output_size = 75
+    L_input_size = 28 * 28
+    HL_output_size = 25
     classes = 10
-    lmbda = 0.0001
+    lmbda = 1
 
     return L_input_size, HL_output_size, classes, lmbda
