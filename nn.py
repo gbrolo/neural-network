@@ -87,6 +87,14 @@ def checkBackpropagation(params, backpropagation_params, L_input_size, HL_output
 
         print("Item: {0} - Real = {1:.6f} - Backpropagation = {2:.6f}".format(x, gradient, backpropagation_params[x]))
 
+def gradient_descent(L_input_size, HL_output_size, classes, X, y, theta, lmbda, iterations = 100):
+    m = len(y)
+
+    for i in range(iterations):
+        theta  = theta - backpropagation(theta, L_input_size, HL_output_size, classes, X, y, lmbda)
+
+    return theta
+
 def analize(theta_1, theta_2, X, y):
     m = len(y)
     ones = np.ones((m,1))
@@ -94,4 +102,12 @@ def analize(theta_1, theta_2, X, y):
     a2 = sigmoid(a1 @ theta_1.T)
     a2 = np.hstack((ones, a2))
     h = sigmoid(a2 @ theta_2.T)
-    return np.argmax(h, axis = 1) + 1
+    return np.argmax(h, axis = 1)
+
+def analize_single(theta_1, theta_2, X):
+    ones = np.ones((1,1))
+    a1 = np.hstack((ones, X))
+    a2 = sigmoid(a1 @ theta_1.T)
+    a2 = np.hstack((ones, a2))
+    h = sigmoid(a2 @ theta_2.T)
+    return np.argmax(h, axis = 1)

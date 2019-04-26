@@ -49,6 +49,7 @@ checkBackpropagation(initial_params, backpropagation_params, L_input_size, HL_ou
 
 # optimize theta to find min
 theta_opt = opt.fmin_cg(maxiter = 50, f = cost, x0 = initial_params, fprime = backpropagation, args = (L_input_size, HL_output_size, classes, X, y.flatten(), lmbda))
+# theta_opt = gradient_descent(L_input_size, HL_output_size, classes, X, y.flatten(), initial_params, lmbda, iterations = 250)
 print('theta_opt: ', theta_opt)
 
 theta1_opt = np.reshape(theta_opt[:HL_output_size * (L_input_size + 1)], (HL_output_size, L_input_size + 1), 'F')
@@ -56,6 +57,12 @@ theta2_opt = np.reshape(theta_opt[HL_output_size * (L_input_size + 1):], (classe
 
 print('theta1_opt: ', theta1_opt)
 print('theta2_opt: ', theta2_opt)
+
+np.save('theta1_opt.npy', theta1_opt)
+np.save('theta2_opt.npy', theta2_opt)
+
+# theta1_opt = np.load('theta1_opt_19-05.npy')
+# theta2_opt = np.load('theta2_opt_19-05.npy')
 
 pred = analize(theta1_opt, theta2_opt, X, y)
 percentage = np.mean(pred == y.flatten()) * 100
