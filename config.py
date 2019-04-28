@@ -1,6 +1,21 @@
+# Config for neural network classifier
+# @author: gbrolo
 
+# training data config
 def train_data():
-    class_names = ['circle', 'egg', 'happy', 'house', 'mickey', 'question', 'sad', 'square', 'tree', 'triangle']
+    class_names = [
+        'circle', 
+        'egg', 
+        'happy', 
+        'house', 
+        'mickey', 
+        'question', 
+        'sad', 
+        'square', 
+        'tree', 
+        'triangle'
+        ]
+
     class_ids = {
         'circle': 0,
         'egg': 1,
@@ -13,11 +28,13 @@ def train_data():
         'tree': 8,
         'triangle': 9
     }
+
     data_path = 'data'
     train_number = 3000
 
     return class_names, class_ids, data_path, train_number
 
+# class ids dictionaries
 def get_class_ids():
     class_ids = {
         'circle': 0,
@@ -47,10 +64,11 @@ def get_class_ids():
 
     return class_ids, ids_to_class
 
+# hyperparameters for neural network
 def nn_hyperparameters():
-    L_input_size = 28 * 28
-    HL_output_size = 25
-    classes = 10
-    lmbda = 1
+    L_input_size = 28 * 28      # input layer size
+    HL_output_size = 25         # hidden layer size
+    classes = 10                # number of classes
+    lmbda = 0.5                 # learning rate
 
     return L_input_size, HL_output_size, classes, lmbda
