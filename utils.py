@@ -27,6 +27,22 @@ def load_train_images(class_names, class_ids, data_path, train_number):
     print('Loaded images!')
     return np.array(X), np.array(y)
 
+def shuffle_dataset(X, y):
+    assert len(X) == len(y)
+    p = np.random.permutation(len(X))
+    return X[p], y[p]
+
+def partition_dataset(X, y, train_number):
+    X_train = X[0 : int((train_number * 0.60))]
+    X_cross = X[int((train_number * 0.60)) : int(((train_number * 0.60) + (train_number * 0.20)))]
+    X_test = X[int(((train_number * 0.60) + (train_number * 0.20))) : int((train_number))]
+
+    y_train = y[0 : int((train_number * 0.60))]
+    y_cross = y[int((train_number * 0.60)) : int(((train_number * 0.60) + (train_number * 0.20)))]
+    y_test = y[int(((train_number * 0.60) + (train_number * 0.20))) : int((train_number))]
+
+    return X_train, X_cross, X_test, y_train, y_cross, y_test
+
 # loads test image from client, for server usage in classifying
 def load_test_image():    
     X = []

@@ -30,7 +30,7 @@ def train_data():
     }
 
     data_path = 'data'
-    train_number = 3000
+    train_number = 5000
 
     return class_names, class_ids, data_path, train_number
 
@@ -67,8 +67,8 @@ def get_class_ids():
 # hyperparameters for neural network
 def nn_hyperparameters():
     L_input_size = 28 * 28      # input layer size
-    HL_output_size = 25         # hidden layer size
+    HL_output_size = 400         # hidden layer size
     classes = 10                # number of classes
-    lmbda = 0.5                 # learning rate
+    lmbda = 3                 # learning rate
 
     return L_input_size, HL_output_size, classes, lmbda

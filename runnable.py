@@ -5,11 +5,34 @@ import matplotlib.image as mpimg
 
 from nn import *
 from config import *
-from utils import load_train_images 
+from utils import * 
 
 # loading data
 class_names, class_ids, data_path, train_number = train_data()
 X, y = load_train_images(class_names, class_ids, data_path, train_number)
+# print('X, y before: ', X[0], y[0])
+# plt.imshow(X[0].reshape((28, 28), order = 'F'))
+# plt.show()
+X, y = shuffle_dataset(X, y)
+# print('X, y after shuffle: ', X[0], y[0])
+# plt.imshow(X[0].reshape((28, 28), order = 'F'))
+# plt.show()
+X_train, X_cross, X_test, y_train, y_cross, y_test = partition_dataset(X, y, train_number)
+print('Training shapes X_train, y_train: ', X_train.shape, y_train.shape)
+print('Cross shapes X_cross, y_cross: ', X_cross.shape, y_cross.shape)
+print('Test shapes X_test, y_test: ', X_test.shape, y_test.shape)
+
+# print('X, y train: ', X_train[0], y_train[0])
+# plt.imshow(X_train[0].reshape((28, 28), order = 'F'))
+# plt.show()
+
+# print('X, y cross: ', X_cross[0], y_cross[0])
+# plt.imshow(X_cross[0].reshape((28, 28), order = 'F'))
+# plt.show()
+
+# print('X, y test: ', X_test[0], y_test[0])
+# plt.imshow(X_test[0].reshape((28, 28), order = 'F'))
+# plt.show()
 
 # show data
 _, x = plt.subplots(10,10,figsize=(10,10))
@@ -28,13 +51,13 @@ theta_1 = initializeWeights(L_input_size, HL_output_size)
 theta_2 = initializeWeights(HL_output_size, classes)
 
 initial_params = np.hstack((theta_1.ravel(order='F'), theta_2.ravel(order='F')))
-backpropagation_params = backpropagation(initial_params, L_input_size, HL_output_size, classes, X, y, lmbda)
+backpropagation_params = backpropagation(initial_params, L_input_size, HL_output_size, classes, X_train, y_train, lmbda)
 
 # check if bp is made correctly
-checkBackpropagation(initial_params, backpropagation_params, L_input_size, HL_output_size, classes ,X, y, lmbda)
+checkGradient(initial_params, backpropagation_params, L_input_size, HL_output_size, classes ,X_train, y_train, lmbda)
 
 # optimize theta to find min
-theta_opt = opt.fmin_cg(maxiter = 100, f = cost, x0 = initial_params, fprime = backpropagation, args = (L_input_size, HL_output_size, classes, X, y.flatten(), lmbda))
+theta_opt = opt.fmin_cg(maxiter = 50, f = cost, x0 = initial_params, fprime = backpropagation, args = (L_input_size, HL_output_size, classes, X_train, y_train.flatten(), lmbda))
 # theta_opt = gradient_descent(L_input_size, HL_output_size, classes, X, y.flatten(), initial_params, lmbda, iterations = 250)
 print('theta_opt: ', theta_opt)
 
@@ -47,8 +70,8 @@ print('theta2_opt: ', theta2_opt)
 np.save('theta1_opt.npy', theta1_opt)
 np.save('theta2_opt.npy', theta2_opt)
 
-pred = analize(theta1_opt, theta2_opt, X, y)
-percentage = np.mean(pred == y.flatten()) * 100
+pred = analize(theta1_opt, theta2_opt, X_train, y_train)
+percentage = np.mean(pred == y_train.flatten()) * 100
 
 print('pred: ',pred)
 print('percentage: ', percentage)

@@ -25,8 +25,8 @@ class NN(Resource):
         X = load_test_image()
 
         # load optimized theta arrays
-        theta1_opt = np.load('theta1_opt_26-93-dataset2.npy')
-        theta2_opt = np.load('theta2_opt_26-93-dataset2.npy')
+        theta1_opt = np.load('theta1_opt_30-64.npy')
+        theta2_opt = np.load('theta2_opt_30-64.npy')
 
         # make prediction and get percentages
         pred, percentages = analize_single(theta1_opt, theta2_opt, X)

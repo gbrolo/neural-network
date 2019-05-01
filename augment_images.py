@@ -14,20 +14,12 @@ def augment(folder):
     p.skew(0.1,0.2)
     p.skew_tilt(0.3,0.5)
     p.skew_left_right(0.1, magnitude = 0.5)
-    p.sample(3000)
+    p.sample(4000)
 
 if __name__=='__main__':
-    folders = [
-        'downloads/circle', 
-        'downloads/egg', 
+    folders = [ 
         'downloads/happy', 
-        'downloads/house', 
-        'downloads/mickey', 
-        'downloads/question', 
-        'downloads/sad', 
-        'downloads/square', 
-        'downloads/tree', 
-        'downloads/triangle'
+        'downloads/house'
     ]
 
     for folder in folders:

@@ -3,6 +3,7 @@
 
 import numpy as np
 import pandas as pd
+from functools import reduce
 
 CHECK_EPSILON = 0.0001  # epsilon for Gradient Checking
 INIT_EPSILON = 0.12     # epsilon independent from Gradient Checking 
@@ -23,33 +24,39 @@ def backpropagation(params, L_input_size, HL_output_size, classes, X, y, lmbda):
     y_hot_encoded = pd.get_dummies(y.flatten())
 
     # set deltas
-    delta_1 = np.zeros(theta_1.shape)
-    delta_2 = np.zeros(theta_2.shape)
+    delta_1 = np.zeros(theta_1.shape)                           # D1
+    delta_2 = np.zeros(theta_2.shape)                           # D2
 
     m = len(y)
     
     for i in range(X.shape[0]):
+        # feed forward or forward propagation
         ones = np.ones(1)
-        a1 = np.hstack((ones, X[i]))
-        z2 = a1 @ theta_1.T
-        a2 = np.hstack((ones, sigmoid(z2)))
-        z3 = a2 @ theta_2.T
-        a3 = sigmoid(z3)
+        a1 = np.hstack((ones, X[i]))                            # a(1) = x
+        z2 = a1 @ theta_1.T                                     # z(2) = theta(1) @ a(1)
+        a2 = np.hstack((ones, sigmoid(z2)))                     # a(2) = g(z(2)), g -> sigmoid
+        z3 = a2 @ theta_2.T                                     # z(3) = theta(2) @ a(2)
+        a3 = sigmoid(z3)                                        # output activation: a(3) = h_theta(x) = g(z(3))
 
-        d3 = a3 - y_hot_encoded.iloc[i,:][np.newaxis,:]
+        # calculate error, backpropagation
+        d3 = a3 - y_hot_encoded.iloc[i,:][np.newaxis,:]         # d(3) = a(3) - y
         z2 = np.hstack((ones, z2))
-        d2 = np.multiply(
-            theta_2.T @ d3.T, 
+        d2 = np.multiply(                                       # error for hidden layer
+            theta_2.T @ d3.T,                                   # d(2) = theta(2)T @ d(3) .* g'(z(2))
             sigmoidPrime(z2).T[:,np.newaxis]
         )
-        delta_1 = delta_1 + d2[1:,:] @ a1[np.newaxis,:]
-        delta_2 = delta_2 + d3.T @ a2[np.newaxis,:]
         
+        # storing gradients
+        delta_1 = delta_1 + d2[1:,:] @ a1[np.newaxis,:]         # D1 = D1 + a(1) @ d(1 + 1)
+        delta_2 = delta_2 + d3.T @ a2[np.newaxis,:]             # D2 = D2 + d(2 + 1) @ a(2)T
+
+    # actual gradients for neural network D1 and D2
     delta_1 = delta_1 / m
     delta_2 = delta_2 / m
     
-    delta_1[:,1:] = delta_1[:,1:] + theta_1[:,1:] * lmbda / m
-    delta_2[:,1:] = delta_2[:,1:] + theta_2[:,1:] * lmbda / m
+    # regularization terms
+    delta_1[:,1:] = delta_1[:,1:] + theta_1[:,1:] * lmbda / m   # D1 = (1/m)D1 + lambda * theta(1)
+    delta_2[:,1:] = delta_2[:,1:] + theta_2[:,1:] * lmbda / m   # D2 = (1/m)D2 + lambda * theta(2)
         
     return np.hstack((delta_1.ravel(order='F'), delta_2.ravel(order='F')))
 
@@ -67,11 +74,13 @@ def cost(params, L_input_size, HL_output_size, classes, X, y, lmbda):
     
     m = len(y)
 
-    ones = np.ones((m,1))
-    a1 = np.hstack((ones, X))
-    a2 = sigmoid(a1 @ theta_1.T)
-    a2 = np.hstack((ones, a2))
-    h = sigmoid(a2 @ theta_2.T)
+    # ones = np.ones((m,1))
+    # a1 = np.hstack((ones, X))
+    # a2 = sigmoid(a1 @ theta_1.T)
+    # a2 = np.hstack((ones, a2))
+    # h = sigmoid(a2 @ theta_2.T)
+
+    h = prediction(m, theta_1, theta_2, X)
     
     # hot encode y values
     y_hot_encoded = pd.get_dummies(y.flatten())
@@ -102,11 +111,11 @@ def cost(params, L_input_size, HL_output_size, classes, X, y, lmbda):
     return cost_left_side + cost_right_side
 
 # compares numerical gradient taken with cost function and gradient taken using backpropagation
-def checkBackpropagation(
-    params, backpropagation_params, L_input_size, HL_output_size, classes, X, y, lmbda=0.0
+def checkGradient(
+    params, backpropagation_params, L_input_size, HL_output_size, classes, X, y, lmbda = 0.0
 ):         
 
-    for i in range(5):
+    for i in range(15):
         x = int(np.random.rand() * len(params))
         eps_vector = np.zeros((len(params), 1))
         eps_vector[x] = CHECK_EPSILON
@@ -118,12 +127,31 @@ def checkBackpropagation(
         print("Random selection: {0} ; Real = {1:.6f} ; Backpropagation = {2:.6f}".format(x, gradient, backpropagation_params[x]))
 
 # performs gradient descent iteration for recalculating theta (find theta opt)
-def gradient_descent(L_input_size, HL_output_size, classes, X, y, theta, lmbda, iterations = 100):
+def gradient_descent(L_input_size, HL_output_size, classes, X, y, theta, lmbda, iterations = 50):
     m = len(y)
+    theta_history = np.zeros((iterations, 2))
+    gradient_check = True
+
     for i in range(iterations):
-        theta -= backpropagation(theta, L_input_size, HL_output_size, classes, X, y, lmbda)
+        gradient = backpropagation(theta, L_input_size, HL_output_size, classes, X, y, lmbda)
+
+        # check if gradient in bp is correct
+        if (gradient_check):
+            checkGradient(theta, gradient, L_input_size, HL_output_size, classes ,X, y, lmbda)
+            gradient_check = False
+
+        theta = theta - gradient
+        theta_history[i,:] = theta.T
 
     return theta
+
+# # performs gradient descent iteration for recalculating theta (find theta opt)
+# def gradient_descent(L_input_size, HL_output_size, classes, X, y, theta, lmbda, iterations = 100):
+#     m = len(y)
+#     for i in range(iterations):
+#         theta = theta - backpropagation(theta, L_input_size, HL_output_size, classes, X, y, lmbda)
+
+#     return theta
 
 # calculates H given params m, theta_1, theta_2 and X
 # m: len(y) or 1 if going to make a single classification
@@ -146,6 +174,8 @@ def analize(theta_1, theta_2, X, y):
 # for classifying single image
 def analize_single(theta_1, theta_2, X):
     h = prediction(1, theta_1, theta_2, X)  
-    total = reduce((lambda x, val: x + val), h[0])
-    percentages = list(map(lambda x: (x * 100) / total, h[0]))
+    print('h is: ', h)
+    # total = reduce((lambda x, val: x + val), h[0])
+    # percentages = list(map(lambda x: (x * 100) / total, h[0]))
+    percentages = list(map(lambda x: x * 100, h[0]))
     return np.argmax(h, axis = 1), percentages
