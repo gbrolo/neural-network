@@ -67,8 +67,8 @@ def get_class_ids():
 # hyperparameters for neural network
 def nn_hyperparameters():
     L_input_size = 28 * 28      # input layer size
-    HL_output_size = 400         # hidden layer size
+    HL_output_size = 1000         # hidden layer size
     classes = 10                # number of classes
-    lmbda = 3                 # learning rate
+    lmbda = 4                 # learning rate
 
     return L_input_size, HL_output_size, classes, lmbda

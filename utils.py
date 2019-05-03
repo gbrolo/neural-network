@@ -33,13 +33,13 @@ def shuffle_dataset(X, y):
     return X[p], y[p]
 
 def partition_dataset(X, y, train_number):
-    X_train = X[0 : int((train_number * 0.60))]
-    X_cross = X[int((train_number * 0.60)) : int(((train_number * 0.60) + (train_number * 0.20)))]
-    X_test = X[int(((train_number * 0.60) + (train_number * 0.20))) : int((train_number))]
+    X_train = X[0 : int((train_number * 0.80))]
+    X_cross = X[int((train_number * 0.80)) : int(((train_number * 0.80) + (train_number * 0.10)))]
+    X_test = X[int(((train_number * 0.80) + (train_number * 0.10))) : int((train_number))]
 
-    y_train = y[0 : int((train_number * 0.60))]
-    y_cross = y[int((train_number * 0.60)) : int(((train_number * 0.60) + (train_number * 0.20)))]
-    y_test = y[int(((train_number * 0.60) + (train_number * 0.20))) : int((train_number))]
+    y_train = y[0 : int((train_number * 0.80))]
+    y_cross = y[int((train_number * 0.80)) : int(((train_number * 0.80) + (train_number * 0.10)))]
+    y_test = y[int(((train_number * 0.80) + (train_number * 0.10))) : int((train_number))]
 
     return X_train, X_cross, X_test, y_train, y_cross, y_test
 
