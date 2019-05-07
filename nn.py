@@ -14,6 +14,27 @@ initializeWeights = np.vectorize(
     lambda L_input, L_output: np.random.rand(L_output, L_input + 1) * 2 * INIT_EPSILON - INIT_EPSILON
 )
 
+def feed_forward(X, theta_1, theta_2, ones):
+    # feed forward or forward propagation    
+    a1 = np.hstack((ones, X))                               # a(1) = x
+    z2 = a1 @ theta_1.T                                     # z(2) = theta(1) @ a(1)
+    a2 = np.hstack((ones, sigmoid(z2)))                     # a(2) = g(z(2)), g -> sigmoid
+    z3 = a2 @ theta_2.T                                     # z(3) = theta(2) @ a(2)
+    a3 = sigmoid(z3)                                        # output activation: a(3) = h_theta(x) = g(z(3))
+
+    return a1, z2, a2, z3, a3
+
+def backpropagate(y, a3, z2, theta_2, ones):
+    # calculate error, backpropagation
+    d3 = a3 - y                                             # d(3) = a(3) - y
+    z2 = np.hstack((ones, z2))
+    d2 = np.multiply(                                       # error for hidden layer
+        theta_2.T @ d3.T,                                   # d(2) = theta(2)T @ d(3) .* g'(z(2))
+        sigmoidPrime(z2).T[:,np.newaxis]
+    )
+
+    return d3, z2, d2
+
 # feeds forward and then backpropagates to find D matrix, containing partial derivatives
 def backpropagation(params, L_input_size, HL_output_size, classes, X, y, lmbda):    
     # initial thetas
@@ -32,18 +53,15 @@ def backpropagation(params, L_input_size, HL_output_size, classes, X, y, lmbda):
     for i in range(X.shape[0]):
         # feed forward or forward propagation
         ones = np.ones(1)
-        a1 = np.hstack((ones, X[i]))                            # a(1) = x
-        z2 = a1 @ theta_1.T                                     # z(2) = theta(1) @ a(1)
-        a2 = np.hstack((ones, sigmoid(z2)))                     # a(2) = g(z(2)), g -> sigmoid
-        z3 = a2 @ theta_2.T                                     # z(3) = theta(2) @ a(2)
-        a3 = sigmoid(z3)                                        # output activation: a(3) = h_theta(x) = g(z(3))
+        a1, z2, a2, z3, a3 = feed_forward(X[i], theta_1, theta_2, ones)
 
         # calculate error, backpropagation
-        d3 = a3 - y_hot_encoded.iloc[i,:][np.newaxis,:]         # d(3) = a(3) - y
-        z2 = np.hstack((ones, z2))
-        d2 = np.multiply(                                       # error for hidden layer
-            theta_2.T @ d3.T,                                   # d(2) = theta(2)T @ d(3) .* g'(z(2))
-            sigmoidPrime(z2).T[:,np.newaxis]
+        d3, z2, d2 = backpropagate(
+            y_hot_encoded.iloc[i,:][np.newaxis,:], 
+            a3, 
+            z2, 
+            theta_2, 
+            ones
         )
         
         # storing gradients
@@ -73,13 +91,6 @@ def cost(params, L_input_size, HL_output_size, classes, X, y, lmbda):
     )
     
     m = len(y)
-
-    # ones = np.ones((m,1))
-    # a1 = np.hstack((ones, X))
-    # a2 = sigmoid(a1 @ theta_1.T)
-    # a2 = np.hstack((ones, a2))
-    # h = sigmoid(a2 @ theta_2.T)
-
     h = prediction(m, theta_1, theta_2, X)
     
     # hot encode y values
@@ -112,10 +123,10 @@ def cost(params, L_input_size, HL_output_size, classes, X, y, lmbda):
 
 # compares numerical gradient taken with cost function and gradient taken using backpropagation
 def checkGradient(
-    params, backpropagation_params, L_input_size, HL_output_size, classes, X, y, lmbda = 0.0
+    params, backpropagation_params, L_input_size, HL_output_size, classes, X, y, lmbda = 0.0, iterations = 15
 ):         
 
-    for i in range(15):
+    for i in range(iterations):
         x = int(np.random.rand() * len(params))
         eps_vector = np.zeros((len(params), 1))
         eps_vector[x] = CHECK_EPSILON
@@ -126,32 +137,32 @@ def checkGradient(
 
         print("Random selection: {0} ; Real = {1:.6f} ; Backpropagation = {2:.6f}".format(x, gradient, backpropagation_params[x]))
 
-# performs gradient descent iteration for recalculating theta (find theta opt)
-def gradient_descent(L_input_size, HL_output_size, classes, X, y, theta, lmbda, iterations = 50):
-    m = len(y)
-    theta_history = np.zeros((iterations, 2))
-    gradient_check = True
-
-    for i in range(iterations):
-        gradient = backpropagation(theta, L_input_size, HL_output_size, classes, X, y, lmbda)
-
-        # check if gradient in bp is correct
-        if (gradient_check):
-            checkGradient(theta, gradient, L_input_size, HL_output_size, classes ,X, y, lmbda)
-            gradient_check = False
-
-        theta = theta - gradient
-        theta_history[i,:] = theta.T
-
-    return theta
-
 # # performs gradient descent iteration for recalculating theta (find theta opt)
-# def gradient_descent(L_input_size, HL_output_size, classes, X, y, theta, lmbda, iterations = 100):
+# def gradient_descent(L_input_size, HL_output_size, classes, X, y, theta, lmbda, iterations = 50):
 #     m = len(y)
+#     theta_history = np.zeros((iterations, 2))
+#     gradient_check = True
+
 #     for i in range(iterations):
-#         theta = theta - backpropagation(theta, L_input_size, HL_output_size, classes, X, y, lmbda)
+#         gradient = backpropagation(theta, L_input_size, HL_output_size, classes, X, y, lmbda)
+
+#         # check if gradient in bp is correct
+#         if (gradient_check):
+#             checkGradient(theta, gradient, L_input_size, HL_output_size, classes ,X, y, lmbda)
+#             gradient_check = False
+
+#         theta = theta - gradient
+#         theta_history[i,:] = theta.T
 
 #     return theta
+
+# performs gradient descent iteration for recalculating theta (find theta opt)
+def gradient_descent(L_input_size, HL_output_size, classes, X, y, theta, lmbda, iterations = 100):
+    m = len(y)
+    for i in range(iterations):
+        theta = theta - backpropagation(theta, L_input_size, HL_output_size, classes, X, y, lmbda)
+
+    return theta
 
 # calculates H given params m, theta_1, theta_2 and X
 # m: len(y) or 1 if going to make a single classification
@@ -179,3 +190,7 @@ def analize_single(theta_1, theta_2, X):
     # percentages = list(map(lambda x: (x * 100) / total, h[0]))
     percentages = list(map(lambda x: x * 100, h[0]))
     return np.argmax(h, axis = 1), percentages
+
+def get_theta_percentage(theta1_opt, theta2_opt, X, y):
+    pred = analize(theta1_opt, theta2_opt, X, y)
+    return np.mean(pred == y.flatten()) * 100

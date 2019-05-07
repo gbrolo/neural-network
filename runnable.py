@@ -57,7 +57,7 @@ backpropagation_params = backpropagation(initial_params, L_input_size, HL_output
 checkGradient(initial_params, backpropagation_params, L_input_size, HL_output_size, classes ,X_train, y_train, lmbda)
 
 # optimize theta to find min
-theta_opt = opt.fmin_cg(maxiter = 50, f = cost, x0 = initial_params, fprime = backpropagation, args = (L_input_size, HL_output_size, classes, X_train, y_train.flatten(), lmbda))
+theta_opt = opt.fmin_cg(maxiter = 60, f = cost, x0 = initial_params, fprime = backpropagation, args = (L_input_size, HL_output_size, classes, X_train, y_train.flatten(), lmbda))
 # theta_opt = gradient_descent(L_input_size, HL_output_size, classes, X, y.flatten(), initial_params, lmbda, iterations = 250)
 print('theta_opt: ', theta_opt)
 
@@ -75,3 +75,11 @@ percentage = np.mean(pred == y_train.flatten()) * 100
 
 print('pred: ',pred)
 print('percentage: ', percentage)
+
+percentage_train = get_theta_percentage(theta1_opt, theta2_opt, X_train, y_train)
+percentage_cross = get_theta_percentage(theta1_opt, theta2_opt, X_cross, y_cross)
+percentage_test = get_theta_percentage(theta1_opt, theta2_opt, X_test, y_test)
+
+print('percentage_train: ', percentage_train)
+print('percentage_cross: ', percentage_cross)
+print('percentage_test: ', percentage_test)
