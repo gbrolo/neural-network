@@ -30,7 +30,7 @@ def backpropagate(y, a3, z2, theta_2, ones):
     z2 = np.hstack((ones, z2))
     d2 = np.multiply(                                       # error for hidden layer
         theta_2.T @ d3.T,                                   # d(2) = theta(2)T @ d(3) .* g'(z(2))
-        sigmoidPrime(z2).T[:,np.newaxis]
+        sigmoidPrime(z2).T[:,np.newaxis]                    # column vector
     )
 
     return d3, z2, d2
@@ -161,6 +161,30 @@ def gradient_descent(L_input_size, HL_output_size, classes, X, y, theta, lmbda, 
     m = len(y)
     for i in range(iterations):
         theta = theta - backpropagation(theta, L_input_size, HL_output_size, classes, X, y, lmbda)
+
+    return theta
+
+def batch_gradient_descent(
+    input_layer_size, hidden_layer_size, num_labels, X, y, theta, lmbda, iterations = 10, batch_size = 50
+):
+    m = len(y)
+    batches = int(m / batch_size)    
+
+    for iteration in range(iterations):
+        indices = np.random.permutation(m)
+        X = X[indices]
+        y = y[indices]
+
+        for i in range(0, m, batch_size):
+            try:
+                X_i = X[i:i + batch_size]
+                y_i = y[i:i + batch_size]
+
+                # X_i = np.c_[np.ones(len(X_i)), X_i]
+
+                theta = theta - nnGrad(theta, input_layer_size, hidden_layer_size, num_labels, X_i, y_i, lmbda)    
+            except:
+                pass
 
     return theta
 

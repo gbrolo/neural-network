@@ -52,11 +52,11 @@ def get_class_ids():
     ids_to_class = {
         '0': 'circle',
         '1': 'egg',
-        '2': 'happy',
+        '2': 'happy face',
         '3': 'house',
-        '4': 'mickey',
-        '5': 'question',
-        '6': 'sad',
+        '4': 'mickey mouse',
+        '5': 'question mark',
+        '6': 'sad face',
         '7': 'square',
         '8': 'tree',
         '9': 'triangle'

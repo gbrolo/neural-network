@@ -14,8 +14,8 @@ X, y = shuffle_dataset(X, y)
 X_train, X_cross, X_test, y_train, y_cross, y_test = partition_dataset(X, y, train_number)
 
 # loading thetas
-theta1_opt = np.load('theta1_opt_69-05.npy')
-theta2_opt = np.load('theta2_opt_69-05.npy')
+theta1_opt = np.load('theta1_opt_76-95.npy')
+theta2_opt = np.load('theta2_opt_76-95.npy')
 
 percentage_train = get_theta_percentage(theta1_opt, theta2_opt, X_train, y_train)
 percentage_cross = get_theta_percentage(theta1_opt, theta2_opt, X_cross, y_cross)
