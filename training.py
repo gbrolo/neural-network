@@ -40,7 +40,7 @@ backpropagation_params = backpropagation(initial_params, L_input_size, HL_output
 checkGradient(initial_params, backpropagation_params, L_input_size, HL_output_size, classes ,X_train, y_train, lmbda)
 
 # optimize theta to find min
-theta_opt = gradient_descent(L_input_size, HL_output_size, classes, X, y.flatten(), initial_params, lmbda, iterations = 250)
+theta_opt = gradient_descent(L_input_size, HL_output_size, classes, X, y.flatten(), initial_params, lmbda)
 theta1_opt = np.reshape(theta_opt[:HL_output_size * (L_input_size + 1)], (HL_output_size, L_input_size + 1), 'F')
 theta2_opt = np.reshape(theta_opt[HL_output_size * (L_input_size + 1):], (classes, HL_output_size + 1), 'F')
 

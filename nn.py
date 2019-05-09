@@ -73,8 +73,8 @@ def backpropagation(params, L_input_size, HL_output_size, classes, X, y, lmbda):
     delta_2 = delta_2 / m
     
     # regularization terms
-    delta_1[:,1:] = delta_1[:,1:] + theta_1[:,1:] * lmbda / m   # D1 = (1/m)D1 + lambda * theta(1)
-    delta_2[:,1:] = delta_2[:,1:] + theta_2[:,1:] * lmbda / m   # D2 = (1/m)D2 + lambda * theta(2)
+    delta_1[:,1:] = delta_1[:,1:] + theta_1[:,1:] * lmbda / m   # D1 = (1/m)(D1 + lambda * theta(1))
+    delta_2[:,1:] = delta_2[:,1:] + theta_2[:,1:] * lmbda / m   # D2 = (1/m)(D2 + lambda * theta(2))
         
     return np.hstack((delta_1.ravel(order='F'), delta_2.ravel(order='F')))
 
@@ -165,7 +165,7 @@ def gradient_descent(L_input_size, HL_output_size, classes, X, y, theta, lmbda, 
     return theta
 
 def batch_gradient_descent(
-    input_layer_size, hidden_layer_size, num_labels, X, y, theta, lmbda, iterations = 10, batch_size = 50
+    L_input_size, HL_output_size, classes, X, y, theta, lmbda, iterations = 10, batch_size = 10
 ):
     m = len(y)
     batches = int(m / batch_size)    
@@ -182,7 +182,7 @@ def batch_gradient_descent(
 
                 # X_i = np.c_[np.ones(len(X_i)), X_i]
 
-                theta = theta - nnGrad(theta, input_layer_size, hidden_layer_size, num_labels, X_i, y_i, lmbda)    
+                theta = theta - backpropagation(theta, L_input_size, HL_output_size, classes, X_i, y_i, lmbda)    
             except:
                 pass
 
